@@ -40,7 +40,7 @@ export const createUser = async (items: IProfile) => {
         {
           app_id: process.env.ONESIGNAL_APP_ID!,
           include_external_user_ids: [session.user.id],
-          headings: { en: "New Blood Request!" },
+          headings: { en: "Successful Profile Creation!" },
           contents: {
             en: "Thank you for registering with Raktaxetu! Your account has been successfully created. We’re glad to welcome you to our community.",
           },

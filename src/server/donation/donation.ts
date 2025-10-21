@@ -6,6 +6,7 @@ import { headers } from "next/headers";
 import Razorpay from "razorpay";
 import crypto from "crypto";
 import { sendEmail } from "./email";
+import axios from "axios";
 
 export const createOrder = async (amount: number) => {
   try {
@@ -69,7 +70,7 @@ export const verifyPayment = async (items: any) => {
     if (!razorpay_payment_id || !razorpay_order_id || !razorpay_signature) {
       throw new Error("missing razorpay params");
     }
-    
+
     const expectedSignature = crypto
       .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET!)
       .update(`${razorpay_order_id}|${razorpay_payment_id}`)
@@ -91,6 +92,27 @@ export const verifyPayment = async (items: any) => {
       { $set: { status: "paid" } }
     );
     await sendEmail(donorEmail, amount, razorpay_order_id);
+    try {
+      await axios.post(
+        "https://onesignal.com/api/v1/notifications",
+        {
+          app_id: process.env.ONESIGNAL_APP_ID!,
+          include_external_user_ids: [session.user.id],
+          headings: { en: "Donation Confirmed!" },
+          contents: {
+            en: "Thank you for your generous donation to RaktaXetu! Your payment was successful. Please check your inbox (and spam folder) for the confirmation email.",
+          },
+        },
+        {
+          headers: {
+            Authorization: `Basic ${process.env.ONESIGNAL_REST_API_KEY!}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    } catch (error) {
+      console.error(error);
+    }
     return {
       ok: true,
       payment: { id: payment.id, status: payment.status },
