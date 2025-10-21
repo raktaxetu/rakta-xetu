@@ -5,6 +5,7 @@ import { Blood } from "@/db/models/blood";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { IBlood } from "../../../types/schema";
+import axios from "axios";
 
 export const requestBlood = async (request: IBlood) => {
   try {
@@ -16,6 +17,29 @@ export const requestBlood = async (request: IBlood) => {
       userId: session.user.id,
       patientEmail: session.user.email,
     });
+
+    try {
+      await axios.post(
+        "https://onesignal.com/api/v1/notifications",
+        {
+          app_id: process.env.ONESIGNAL_APP_ID!,
+          included_segments: ["All"],
+          headings: { en: "New Blood Request!" },
+          contents: {
+            en: `A new blood request for ${request.bloodGroup} has been submitted at ${request.location}. Please help if you can!`,
+          },
+        },
+        {
+          headers: {
+            Authorization: `Basic ${process.env.ONESIGNAL_REST_API_KEY!}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    } catch (error) {
+      console.error(error);
+    }
+
     return {
       success: true,
       requestId: result._id.toString(),
