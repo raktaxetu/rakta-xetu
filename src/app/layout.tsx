@@ -5,6 +5,7 @@ import "@/styles/globals.css";
 import { QueryProvider } from "@/components/query-provider";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { NotificationProvider } from "@/notification-provider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -18,20 +19,22 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Children) {
   return (
-    <html lang="en" className="scroll-smooth">
-      <head>
-        <link rel="icon" href="/logo.jpg" />
-      </head>
-      <body className={inter.className}>
-        <QueryProvider>
-          <main>
-            {children}
-            <Toaster />
-            <SpeedInsights />
-            <Analytics />
-          </main>
-        </QueryProvider>
-      </body>
-    </html>
+    <NotificationProvider>
+      <html lang="en" className="scroll-smooth">
+        <head>
+          <link rel="icon" href="/logo.jpg" />
+        </head>
+        <body className={inter.className}>
+          <QueryProvider>
+            <main>
+              {children}
+              <Toaster />
+              <SpeedInsights />
+              <Analytics />
+            </main>
+          </QueryProvider>
+        </body>
+      </html>
+    </NotificationProvider>
   );
 }
