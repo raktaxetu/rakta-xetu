@@ -7,6 +7,9 @@ const client = StreamChat.getInstance(
   process.env.STREAM_API_SECRET!
 );
 
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
+
 export async function POST(request: NextRequest) {
   try {
     const rawBody = await request.text();
