@@ -6,6 +6,7 @@ import { google } from "googleapis";
 import connectToDb from "@/db";
 import Schedule from "@/db/models/schedule";
 import { sendEmail } from "./email";
+import axios from "axios";
 
 export const saveEvent = async (hospitalName: string, donationTime: any) => {
   try {
@@ -60,6 +61,27 @@ export const saveEvent = async (hospitalName: string, donationTime: any) => {
       session.user.id,
       schedule.googleEventId
     );
+    try {
+      await axios.post(
+        "https://onesignal.com/api/v1/notifications",
+        {
+          app_id: process.env.ONESIGNAL_APP_ID!,
+          include_external_user_ids: [session.user.id],
+          headings: { en: "New Appointment Schedule" },
+          contents: {
+            en: "Your blood donation has been successfully scheduled! Please check your inbox for a confirmation email.",
+          },
+        },
+        {
+          headers: {
+            Authorization: `Basic ${process.env.ONESIGNAL_REST_API_KEY!}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    } catch (error) {
+      console.error(error);
+    }
     return {
       scheduleId: schedule._id.toString(),
       eventId: schedule.googleEventId,
