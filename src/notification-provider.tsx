@@ -13,6 +13,9 @@ export function NotificationProvider({ children }: Children) {
         notifyButton: {
           enable: true,
         } as any,
+        allowLocalhostAsSecureOrigin: true,
+      }).then(() => {
+        OneSignal.Notifications.requestPermission();
       });
     }
   }, []);
@@ -20,6 +23,7 @@ export function NotificationProvider({ children }: Children) {
   useEffect(() => {
     if (session?.user.id) {
       OneSignal.login(session.user.id);
+      OneSignal.User.addTag("user_id", session.user.id);
     }
   }, [session?.user.id]);
   return <>{children}</>;
