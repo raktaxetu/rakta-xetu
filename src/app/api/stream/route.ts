@@ -16,7 +16,6 @@ export async function POST(request: NextRequest) {
     const signature = request.headers.get("x-signature");
     if (signature) {
       const valid = client.verifyWebhook(rawBody, signature);
-      console.log(valid);
       if (!valid) {
         return NextResponse.json(
           { error: "Invalid webhook signature" },
@@ -26,12 +25,10 @@ export async function POST(request: NextRequest) {
     }
 
     const body = JSON.parse(rawBody);
-    console.log(body);
     if (body?.type === "message.new") {
       const { message, user, members } = body;
       const receivers =
         members?.filter((member: any) => member.user_id !== user.id) || [];
-      console.log(receivers);
       const receiverIds = receivers.map((member: any) => member.user_id);
       if (receiverIds.length > 0) {
         await axios.post(
