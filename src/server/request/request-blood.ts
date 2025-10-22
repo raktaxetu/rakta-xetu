@@ -23,7 +23,15 @@ export const requestBlood = async (request: IBlood) => {
         "https://onesignal.com/api/v1/notifications",
         {
           app_id: process.env.ONESIGNAL_APP_ID!,
-          exclude_external_user_ids: [session.user.id],
+          included_segments: ["All"],
+          filters: [
+            {
+              field: "tag",
+              key: "user_id",
+              relation: "!=",
+              value: session.user.id,
+            },
+          ],
           headings: { en: "New Blood Request!" },
           contents: {
             en: `A new blood request for ${request.bloodGroup} has been submitted at ${request.location}. Please help if you can!`,
