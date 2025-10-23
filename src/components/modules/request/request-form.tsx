@@ -22,7 +22,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { requestBlood } from "@/server/request/request-blood";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -49,6 +49,7 @@ const formSchema = z.object({
 });
 
 export function RequestForm() {
+  const queryClient = useQueryClient();
   const router = useRouter();
   const form = useForm<any>({
     resolver: zodResolver(formSchema),
@@ -89,6 +90,9 @@ export function RequestForm() {
     onSuccess: () => {
       form.reset();
       toast.success("Blood request submitted successfully");
+      queryClient.refetchQueries({
+        queryKey: ["myRequests"],
+      });
       router.push("/request-blood/my-requests");
     },
     onError: (error) => {

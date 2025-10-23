@@ -25,7 +25,7 @@ const PAGE_SIZE = 10;
 
 function RequestsSkeleton() {
   return (
-    <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4 my-4">
+    <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4 pb-4">
       {Array.from({ length: PAGE_SIZE }).map((_, i) => (
         <Skeleton key={i} className="h-20 w-full" />
       ))}

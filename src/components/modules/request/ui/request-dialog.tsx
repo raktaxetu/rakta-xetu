@@ -22,10 +22,9 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { acceptRequest } from "@/server/request/accept-request";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 
 interface RequestDialogProps {
   request: IBlood;
@@ -41,7 +40,7 @@ export function RequestDialog({
   setOpen,
 }: RequestDialogProps) {
   if (!request) return null;
-  const router = useRouter();
+  const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationKey: ["accept-request"],
     mutationFn: async () => {
@@ -58,7 +57,9 @@ export function RequestDialog({
     onSuccess: () => {
       toast.success("Accepted Request");
       setOpen(false);
-      router.refresh();
+      queryClient.refetchQueries({
+        queryKey: ["requests"],
+      });
     },
   });
 
@@ -117,8 +118,12 @@ export function RequestDialog({
               onClick={() => mutation.mutate()}
               disabled={mutation.isPending}
             >
-              {mutation.isPending ? "Accepting...": "Accept"}
-              {mutation.isPending ? <Loader className="animate-spin" /> : <CircleCheck />}
+              {mutation.isPending ? "Accepting..." : "Accept"}
+              {mutation.isPending ? (
+                <Loader className="animate-spin" />
+              ) : (
+                <CircleCheck />
+              )}
             </Button>
           )}
         </DialogFooter>
