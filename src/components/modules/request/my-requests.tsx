@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, use } from "react";
+import { useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -12,12 +12,25 @@ import { MyRequestCard } from "./ui/my-request-card";
 import { MyRequestDialog } from "./ui/my-request-dialog";
 import { IBlood } from "../../../../types/schema";
 import { Button } from "@/components/ui/button";
+import { myRequests } from "@/server/request/my-requests";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { Skeleton } from "@/components/ui/skeleton";
 
-interface Props {
-  requests: Promise<IBlood[]>;
+interface Props {}
+
+const PAGE_SIZE = 10;
+
+function MyRequestsSkeleton() {
+  return (
+    <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4 my-4">
+      {Array.from({ length: PAGE_SIZE }).map((_, i) => (
+        <Skeleton key={i} className="h-40 w-full" />
+      ))}
+    </div>
+  );
 }
 
-export function MyRequestsList({ requests }: Props) {
+export function MyRequestsList({}: Props) {
   const [selected, setSelected] = useState<IBlood | null>(null);
   const [open, setOpen] = useState(false);
   const [isAcceptedFilter, setIsAcceptedFilter] = useState<boolean | null>(
@@ -26,26 +39,57 @@ export function MyRequestsList({ requests }: Props) {
   const [isCriticalFilter, setIsCriticalFilter] = useState<boolean | null>(
     null
   );
-  const myRequests = use(requests);
-  const filtered = myRequests.filter((r) => {
-    if (
-      typeof isAcceptedFilter === "boolean" &&
-      r.isAccepted !== isAcceptedFilter
-    )
-      return false;
-    if (
-      typeof isCriticalFilter === "boolean" &&
-      r.isCritical !== isCriticalFilter
-    )
-      return false;
-    return true;
+
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    isError,
+    error,
+    isRefetching,
+  } = useInfiniteQuery({
+    queryKey: [
+      "myRequests",
+      { isAccepted: isAcceptedFilter, isCritical: isCriticalFilter },
+    ],
+    queryFn: ({ pageParam = 1 }) =>
+      myRequests({
+        isAccepted: isAcceptedFilter,
+        isCritical: isCriticalFilter,
+        limit: PAGE_SIZE,
+        page: pageParam,
+      }),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, allPages) => {
+      const totalPages = Math.ceil(lastPage.totalCount / PAGE_SIZE);
+      const nextPage = allPages.length + 1;
+      return nextPage <= totalPages ? nextPage : undefined;
+    },
   });
 
-  const [visibleCount, setVisibleCount] = useState(10);
+  const requestsList = data?.pages?.flatMap((page: any) => page.requests || []) || [];
+  const totalCount = data?.pages?.[0]?.totalCount || 0;
 
-  useEffect(() => {
-    setVisibleCount(10);
-  }, [isAcceptedFilter, isCriticalFilter, requests]);
+  const handleFilterChange = (
+    setter: (val: boolean | null) => void,
+    val: string
+  ) => {
+    setter(val === "all" ? null : val === "true");
+  };
+
+  if (isError) {
+    return (
+      <div className="my-4">
+        <p className="text-rose-600 font-medium">
+          Error fetching requests: {error?.message || "Unknown error"}
+        </p>
+      </div>
+    );
+  }
+
+  const isQuerying = isLoading || isRefetching;
 
   return (
     <div className="my-4 w-full">
@@ -72,7 +116,7 @@ export function MyRequestsList({ requests }: Props) {
                     : "all"
                 }
                 onValueChange={(val: string) =>
-                  setIsAcceptedFilter(val === "all" ? null : val === "true")
+                  handleFilterChange(setIsAcceptedFilter, val)
                 }
               >
                 <DropdownMenuRadioItem
@@ -120,7 +164,7 @@ export function MyRequestsList({ requests }: Props) {
                     : "all"
                 }
                 onValueChange={(val: string) =>
-                  setIsCriticalFilter(val === "all" ? null : val === "true")
+                  handleFilterChange(setIsCriticalFilter, val)
                 }
               >
                 <DropdownMenuRadioItem
@@ -147,14 +191,16 @@ export function MyRequestsList({ requests }: Props) {
         </div>
       </div>
 
-      {filtered.length === 0 ? (
+      {isQuerying && requestsList.length === 0 ? (
+        <MyRequestsSkeleton />
+      ) : requestsList.length === 0 ? (
         <div className="my-4">
           <p className="text-rose-500 font-light">No requests found</p>
         </div>
       ) : (
         <>
           <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4 justify-center items-center">
-            {filtered.slice(0, visibleCount).map((request: IBlood) => (
+            {requestsList.map((request: IBlood) => (
               <MyRequestCard
                 key={request._id?.toString()}
                 request={request}
@@ -165,17 +211,17 @@ export function MyRequestsList({ requests }: Props) {
               />
             ))}
           </div>
-          {visibleCount < filtered.length && (
+          {(hasNextPage || isFetchingNextPage) && (
             <div className="flex justify-center items-center my-4">
               <Button
                 variant="outline"
                 size="sm"
-                disabled={visibleCount >= filtered.length}
-                onClick={() =>
-                  setVisibleCount((v) => Math.min(v + 10, filtered.length))
-                }
+                disabled={isFetchingNextPage}
+                onClick={() => fetchNextPage()}
               >
-                Load More
+                {isFetchingNextPage
+                  ? "Loading More..."
+                  : `Load More (${requestsList.length} of ${totalCount})`}
               </Button>
             </div>
           )}
