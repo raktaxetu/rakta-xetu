@@ -58,6 +58,7 @@ export const acceptRequest = async (
           contents: {
             en: "Your blood request has been accepted. Please check your inbox for details.",
           },
+          url: `${process.env.BETTER_AUTH_URL!}/request-blood/my-requests`,
         },
         {
           headers: {
