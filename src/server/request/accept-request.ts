@@ -5,6 +5,7 @@ import Profile from "@/db/models/profile";
 import { inngest } from "@/inngest/client";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
+import axios from "axios";
 
 export const acceptRequest = async (
   requestorEmail: string,
@@ -47,6 +48,27 @@ export const acceptRequest = async (
         requestorEmail,
       },
     });
+    try {
+      await axios.post(
+        "https://onesignal.com/api/v1/notifications",
+        {
+          app_id: process.env.ONESIGNAL_APP_ID!,
+          include_external_user_ids: [updatedRequest.userId],
+          headings: { en: "Someone Accepted Your Blood Request" },
+          contents: {
+            en: "Your blood request has been accepted. Please check your inbox for details.",
+          },
+        },
+        {
+          headers: {
+            Authorization: `Basic ${process.env.ONESIGNAL_REST_API_KEY!}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    } catch (error) {
+      console.error(error);
+    }
     return { success: true, message: "Blood request accepted successfully" };
   } catch (error) {
     console.error("Error accepting request:", error);
