@@ -14,7 +14,7 @@ export function SearchBar() {
     <div className="my-4 max-w-md w-full">
       <InputGroup>
         <InputGroupInput
-          placeholder="Search Donors"
+          placeholder="Search Donors by Name or Location"
           value={searchDonor}
           onChange={(e) => setSearchDonor(e.target.value)}
         />

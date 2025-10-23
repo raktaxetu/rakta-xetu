@@ -12,7 +12,7 @@ export function DonorsList({ donors }: { donors: Promise<IDonor[]> }) {
   const [selectedDonor, setSelectedDonor] = useState<IDonor | null>(null);
   const [open, setOpen] = useState(false);
   const limit = 10;
-  const donorsList = use(donors)
+  const donorsList = use(donors);
   const donorsSafe = donorsList ?? [];
   if (donorsSafe.length === 0) {
     return <p className="text-red-500 font-light">No donors are present</p>;
@@ -23,13 +23,14 @@ export function DonorsList({ donors }: { donors: Promise<IDonor[]> }) {
     setOpen(true);
   };
 
-  const filteredDonors = useMemo(
-    () =>
-      donorsSafe.filter((donor: IDonor) =>
-        donor.user.name.toLowerCase().includes(searchDonor.toLowerCase())
-      ),
-    [donorsSafe, searchDonor]
-  );
+  const filteredDonors = useMemo(() => {
+    const q = searchDonor.toLowerCase().trim();
+    return donorsSafe.filter((donor: IDonor) => {
+      const name = donor.user?.name?.toLowerCase() ?? "";
+      const location = (donor.location ?? "").toLowerCase();
+      return name.includes(q) || location.includes(q);
+    });
+  }, [donorsSafe, searchDonor]);
 
   const [visibleCount, setVisibleCount] = useState(limit);
 
