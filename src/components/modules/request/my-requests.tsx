@@ -82,8 +82,8 @@ export function MyRequestsList({}: Props) {
   if (isError) {
     return (
       <div className="my-4">
-        <p className="text-rose-600 font-medium">
-          Error fetching requests: {error?.message || "Unknown error"}
+        <p className="text-rose-600 font-light">
+          Error fetching requests
         </p>
       </div>
     );
