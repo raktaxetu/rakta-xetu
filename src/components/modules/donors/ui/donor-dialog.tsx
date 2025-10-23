@@ -46,7 +46,10 @@ export function DonorDialog({
   const mutation = useMutation({
     mutationKey: ["send-request"],
     mutationFn: async () => {
-      const response = await sendRequest(donor.user.email);
+      const response = await sendRequest(
+        donor.user.email,
+        donor.user._id?.toString()
+      );
       return response;
     },
     onSuccess: () => {
