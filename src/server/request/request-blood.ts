@@ -6,6 +6,7 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { IBlood } from "../../../types/schema";
 import axios from "axios";
+import pusher from "@/pusher";
 
 export const requestBlood = async (request: IBlood) => {
   try {
@@ -16,6 +17,11 @@ export const requestBlood = async (request: IBlood) => {
       ...request,
       userId: session.user.id,
       patientEmail: session.user.email,
+    });
+
+    await pusher.trigger("blood-requests", "new-request", {
+      message: "A new blood request has been submitted!",
+      userId: session.user.id,
     });
 
     try {
