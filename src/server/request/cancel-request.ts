@@ -4,6 +4,7 @@ import connectToDb from "@/db";
 import { Blood } from "@/db/models/blood";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
+import pusher from "@/pusher";
 
 export const cancelRequest = async (requestId: string) => {
   try {
@@ -15,6 +16,7 @@ export const cancelRequest = async (requestId: string) => {
       userId: session.user.id,
     });
     if (!deleted) throw new Error("request not found or not authorized");
+    await pusher.trigger("blood-requests", "delete-request", {});
     return { success: true };
   } catch (error) {
     console.error(error);

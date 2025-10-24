@@ -27,6 +27,12 @@ export function PusherProvider({ children }: Children) {
       });
     });
 
+    channel.bind("delete-request", () => {
+      queryClient.refetchQueries({
+        queryKey: ["requests"],
+      });
+    });
+
     return () => {
       channel.unbind_all();
       channel.unsubscribe();
