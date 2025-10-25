@@ -11,7 +11,9 @@ export const searchDonorsWithAI = async () => {
     const session = await auth.api.getSession({ headers: await headers() });
     if (!session) throw new Error("the user is not authenticated");
     await connectToDb();
-    const myProfile: IProfile | null = await Profile.findOne({ userId: session.user.id });
+    const myProfile: IProfile | null = await Profile.findOne({
+      userId: session.user.id,
+    });
     if (!myProfile) {
       return {
         error: "the profile doesn't exist",
@@ -24,9 +26,10 @@ export const searchDonorsWithAI = async () => {
         inputs: { text: aiQuery },
       },
     });
-    const donors = results.result.hits;
-    console.log(donors);
-    return donors;
+    const result = results.result.hits;
+    const resultIds = result.map((item) => item._id);
+    const donors = await Profile.find({ _id: { $in: resultIds } });
+    return JSON.parse(JSON.stringify(donors));
   } catch (error) {
     console.error(error);
     return {
