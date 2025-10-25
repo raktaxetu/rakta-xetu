@@ -12,7 +12,7 @@ export default function FindDonors() {
   const donors = fetchDonors();
   return (
     <div>
-      <div className="flex justify-center items-center gap-x-4">
+      <div className="flex flex-col justify-start items-start gap-4">
         <p className="text-neutral-500 text-2xl font-light">Find Donors</p>
         <AISearch />
       </div>
