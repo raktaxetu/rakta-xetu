@@ -1,5 +1,6 @@
 import { DonorsList } from "@/components/modules/donors/donors-list";
 import { SearchBar } from "@/components/modules/donors/search-bar";
+import { AISearch } from "@/components/modules/donors/ui/search";
 import { Spinner } from "@/components/spinner";
 import { fetchDonors } from "@/server/donors/fetch-donors";
 import { Suspense } from "react";
@@ -11,7 +12,10 @@ export default function FindDonors() {
   const donors = fetchDonors();
   return (
     <div>
-      <p className="text-neutral-500 text-2xl font-light">Find Donors</p>
+      <div className="flex justify-center items-center gap-x-4">
+        <p className="text-neutral-500 text-2xl font-light">Find Donors</p>
+        <AISearch />
+      </div>
       <SearchBar />
       <Suspense
         fallback={

@@ -8,6 +8,7 @@ import Profile from "@/db/models/profile";
 import { ObjectId } from "mongodb";
 import { StreamChat } from "stream-chat";
 import axios from "axios";
+import { upsertVector } from "@/vector/services/donor-vectors";
 
 const serverClient = StreamChat.getInstance(
   process.env.STREAM_API_KEY!,
@@ -33,6 +34,8 @@ export const createUser = async (items: IProfile) => {
         session.user.image ||
         `https://getstream.io/random_png/?id=${session.user.id}`,
     });
+
+    await upsertVector(result);
 
     try {
       await axios.post(
