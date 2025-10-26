@@ -24,7 +24,9 @@ export default function FindDonors() {
           </div>
         }
       >
-        <DonorsList donors={donors} />
+        <div className="pb-4">
+          <DonorsList donors={donors} />
+        </div>
       </Suspense>
     </div>
   );
