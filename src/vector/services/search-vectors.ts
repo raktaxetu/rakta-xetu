@@ -37,8 +37,15 @@ export const searchDonorsWithAI = async () => {
     const profiles = await Profile.find({ _id: { $in: resultIds } }).lean();
 
     if (!profiles.length) return [];
+    const profilesById = new Map(
+      profiles.map((p: any) => [p._id?.toString(), p])
+    );
 
-    const filteredProfiles = profiles.filter(
+    const orderedProfiles = resultIds
+      .map((id: any) => profilesById.get(id?.toString()))
+      .filter(Boolean) as any[];
+
+    const filteredProfiles = orderedProfiles.filter(
       (p: any) => p.userId?.toString() !== session.user.id
     );
 
