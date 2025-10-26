@@ -7,7 +7,9 @@ export default function MyRequests() {
   return (
     <div className="w-full">
       <p className="text-neutral-500 text-2xl font-light">My Requests</p>
-      <MyRequestsList />
+      <div className="pb-4">
+        <MyRequestsList />
+      </div>
     </div>
   );
 }

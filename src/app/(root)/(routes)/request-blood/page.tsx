@@ -27,7 +27,9 @@ export default function RequestBlood() {
           </Link>
         </Button>
       </div>
-      <RequestsList />
+      <div className="pb-4">
+        <RequestsList />
+      </div>
     </div>
   );
 }
