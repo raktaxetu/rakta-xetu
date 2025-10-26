@@ -6,14 +6,20 @@ import { DonorCard } from "./ui/donor-card";
 import { IDonor } from "../../../../types/schema";
 import { useSearchDonors } from "@/store/search-donors";
 import { Button } from "@/components/ui/button";
+import { useAISearch } from "@/store/search-ai";
+import { Shimmer } from "@/components/ai-elements/shimmer";
+import { BrainCircuit } from "lucide-react";
+import { useAIMatch } from "@/store/match";
 
 export function DonorsList({ donors }: { donors: Promise<IDonor[]> }) {
+  const { isAISearching } = useAISearch();
   const { searchDonor } = useSearchDonors();
   const [selectedDonor, setSelectedDonor] = useState<IDonor | null>(null);
+  const { matches, setMatches } = useAIMatch();
   const [open, setOpen] = useState(false);
   const limit = 10;
   const donorsList = use(donors);
-  const donorsSafe = donorsList ?? [];
+  const donorsSafe = matches && matches.length > 0 ? matches : donorsList;
   if (donorsSafe.length === 0) {
     return <p className="text-red-500 font-light">No donors are present</p>;
   }
@@ -47,6 +53,20 @@ export function DonorsList({ donors }: { donors: Promise<IDonor[]> }) {
     if (!open) setSelectedDonor(null);
   }, [open]);
 
+  if (isAISearching) {
+    return (
+      <div className="flex justify-start items-center gap-x-3">
+        <BrainCircuit
+          size={16}
+          className="animate-pulse text-neutral-500 font-light"
+        />
+        <Shimmer className="text-sm font-light">
+          Searching donors based on your profile
+        </Shimmer>
+      </div>
+    );
+  }
+
   return (
     <>
       <div className="grid grid-cols-1 sm:grid-cols-2 place-items-center gap-4">
@@ -58,6 +78,17 @@ export function DonorsList({ donors }: { donors: Promise<IDonor[]> }) {
           />
         ))}
       </div>
+      {matches && matches.length > 0 && (
+        <div className="flex justify-center my-4">
+          <button
+            className="text-sm text-blue-500 font-light"
+            onClick={() => setMatches([])}
+            aria-label="Exit AI mode"
+          >
+            Exit from AI Mode
+          </button>
+        </div>
+      )}
       {filteredDonors.length > limit && (
         <div className="flex justify-center items-center gap-2 mt-4">
           <Button
