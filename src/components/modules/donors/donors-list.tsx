@@ -77,16 +77,18 @@ export function DonorsList({ donors }: { donors: Promise<IDonor[]> }) {
             onClick={() => handleOpen(donor)}
           />
         ))}
-        {matches && matches.length > 0 && (
+      </div>
+      {matches && matches.length > 0 && (
+        <div className="flex justify-center my-4">
           <button
-            className="my-4 text-sm text-blue-500 font-light"
+            className="text-sm text-blue-500 font-light"
             onClick={() => setMatches([])}
             aria-label="Exit AI mode"
           >
             Exit from AI Mode
           </button>
-        )}
-      </div>
+        </div>
+      )}
       {filteredDonors.length > limit && (
         <div className="flex justify-center items-center gap-2 mt-4">
           <Button
