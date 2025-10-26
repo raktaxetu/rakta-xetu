@@ -69,6 +69,11 @@ export function DonorsList({ donors }: { donors: Promise<IDonor[]> }) {
 
   return (
     <>
+      {matches && matches.length > 0 && (
+        <div className="my-4 text-neutral-500 font-light">
+          Here are the top 10 results based on your profile
+        </div>
+      )}
       <div className="grid grid-cols-1 sm:grid-cols-2 place-items-center gap-4">
         {paginatedDonors.map((donor) => (
           <DonorCard
