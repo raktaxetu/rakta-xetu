@@ -9,6 +9,7 @@ import {
   MessageInput,
   MessageList,
   Window,
+  OPTIONAL_MESSAGE_ACTIONS,
 } from "stream-chat-react";
 import "stream-chat-react/dist/css/v2/index.css";
 
@@ -63,7 +64,15 @@ export function ChatComponent({ items, userId }: Props) {
       <Channel channel={channel}>
         <Window>
           <ChannelHeader />
-          <MessageList messageActions={["quote", "edit", "delete", "react"]} />
+          <MessageList
+            messageActions={[
+              "quote",
+              "edit",
+              "delete",
+              "react",
+              OPTIONAL_MESSAGE_ACTIONS.deleteForMe,
+            ]}
+          />
           <MessageInput />
         </Window>
       </Channel>
