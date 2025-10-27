@@ -3,6 +3,12 @@ import React, { useMemo, useState } from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { motion } from "framer-motion";
 import { Ban, ChevronRight, Code2, Loader2, Terminal } from "lucide-react";
+import {
+  Source,
+  Sources,
+  SourcesContent,
+  SourcesTrigger,
+} from "@/components/ai-elements/sources";
 
 import { cn } from "@/lib/utils";
 import {
@@ -17,7 +23,7 @@ import { Shimmer } from "../ai-elements/shimmer";
 type WebToolResult = {
   url: string;
   title: string;
-}
+};
 
 const chatBubbleVariants = cva(
   "group/message relative break-words rounded-lg p-3 text-sm sm:max-w-[70%]",
@@ -394,21 +400,40 @@ function ToolCall({
                   key={index}
                   className="rounded-lg border bg-sidebar space-y-2 wrap-anywhere"
                 >
-                  {invocation.result.map((result: WebToolResult, index: number) => (
-                    <div className="space-y-1 p-3 rounded-lg" key={index + 1}>
-                      <p className="text-light text-neutral-600 text-sm">
-                        <span className="text-neutral-700">Title:</span>{" "}
-                        <span>{result.title}</span>
-                      </p>
-                      <a
-                        className="text-light text-neutral-600 text-sm"
-                        href={result.url}
-                        target="_blank"
-                      >
-                        <span className="text-neutral-700">Link:</span> <span className="underline">{result.url}</span>
-                      </a>
-                    </div>
-                  ))}
+                  <div className="p-3 mb-0">
+                    <Sources>
+                      <SourcesTrigger count={3} />
+                      <SourcesContent className="mb-0 text-blue-500">
+                        {invocation.result.map(
+                          (result: WebToolResult, index: number) => (
+                            <Source
+                              href={result.url}
+                              title={result.title}
+                              key={index}
+                            />
+                          )
+                        )}
+                      </SourcesContent>
+                    </Sources>
+                  </div>
+                  {invocation.result.map(
+                    (result: WebToolResult, index: number) => (
+                      <div className="space-y-1 p-3 rounded-lg" key={index + 1}>
+                        <p className="text-light text-neutral-600 text-sm">
+                          <span className="text-neutral-700">Title:</span>{" "}
+                          <span>{result.title}</span>
+                        </p>
+                        <a
+                          className="text-light text-neutral-600 text-sm"
+                          href={result.url}
+                          target="_blank"
+                        >
+                          <span className="text-neutral-700">Link:</span>{" "}
+                          <span className="underline">{result.url}</span>
+                        </a>
+                      </div>
+                    )
+                  )}
                 </div>
               );
             }
