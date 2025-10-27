@@ -85,13 +85,15 @@ export function DonorsList({ donors }: { donors: Promise<IDonor[]> }) {
       </div>
       {matches && matches.length > 0 && (
         <div className="flex justify-center my-4">
-          <button
-            className="text-sm text-blue-500 font-light"
+          <Button
+            variant="outline"
+            size="sm"
+            className="text-sm text-neutral-500 font-light"
             onClick={() => setMatches([])}
             aria-label="Exit AI mode"
           >
             Exit from AI Mode
-          </button>
+          </Button>
         </div>
       )}
       {filteredDonors.length > limit && (
