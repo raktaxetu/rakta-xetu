@@ -12,6 +12,12 @@ import {
 } from "@/components/ui/collapsible";
 import { FilePreview } from "@/components/ui/file-preview";
 import { MarkdownRenderer } from "@/components/ui/markdown-renderer";
+import { Shimmer } from "../ai-elements/shimmer";
+
+type WebToolResult = {
+  url: string;
+  title: string;
+}
 
 const chatBubbleVariants = cva(
   "group/message relative break-words rounded-lg p-3 text-sm sm:max-w-[70%]",
@@ -329,6 +335,7 @@ function ToolCall({
   return (
     <div className="flex flex-col items-start gap-2">
       {toolInvocations.map((invocation, index) => {
+        const { toolName } = invocation;
         const isCancelled =
           invocation.state === "result" &&
           invocation.result.__cancelled === true;
@@ -355,6 +362,13 @@ function ToolCall({
         switch (invocation.state) {
           case "partial-call":
           case "call":
+            if (toolName === "webSearch") {
+              return (
+                <div key={index}>
+                  <Shimmer className="font-light">Searching the web</Shimmer>
+                </div>
+              );
+            }
             return (
               <div
                 key={index}
@@ -374,6 +388,30 @@ function ToolCall({
               </div>
             );
           case "result":
+            if (toolName === "webSearch") {
+              return (
+                <div
+                  key={index}
+                  className="rounded-lg border bg-sidebar space-y-2 wrap-anywhere"
+                >
+                  {invocation.result.map((result: WebToolResult, index: number) => (
+                    <div className="space-y-1 p-3 rounded-lg" key={index + 1}>
+                      <p className="text-light text-neutral-600 text-sm">
+                        <span className="text-neutral-700">Title:</span>{" "}
+                        <span>{result.title}</span>
+                      </p>
+                      <a
+                        className="text-light text-neutral-600 text-sm"
+                        href={result.url}
+                        target="_blank"
+                      >
+                        <span className="text-neutral-700">Link:</span> <span className="underline">{result.url}</span>
+                      </a>
+                    </div>
+                  ))}
+                </div>
+              );
+            }
             return (
               <div
                 key={index}
