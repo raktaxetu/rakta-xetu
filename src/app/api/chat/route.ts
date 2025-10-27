@@ -4,6 +4,7 @@ import { streamText } from "ai";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import arcjet, { tokenBucket } from "@arcjet/next";
+import { webSearch } from "@/tools/web-search";
 
 export const maxDuration = 30;
 
@@ -55,6 +56,10 @@ export async function POST(req: Request) {
 
     Maintain a concise, informative, empathetic, and professional tone. Avoid unnecessary medical jargon; when clinical terminology is required, explain it briefly. If a question lacks necessary details for a safe or useful answer, ask one clear clarifying question. When operational details are requested (hours, locations, eligibility), offer to search Rakta Xetu resources or ask for the user's location to provide accurate local information.`,
     messages,
+    tools: {
+      webSearch,
+    },
+    maxSteps: 2,
     experimental_telemetry: {
       isEnabled: true,
       recordInputs: true,
