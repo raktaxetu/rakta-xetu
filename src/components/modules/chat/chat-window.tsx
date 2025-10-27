@@ -12,6 +12,7 @@ import {
   OPTIONAL_MESSAGE_ACTIONS,
 } from "stream-chat-react";
 import "stream-chat-react/dist/css/v2/index.css";
+import type { CustomMessageActions } from "stream-chat-react";
 
 interface TokenItem {
   token: string;
@@ -49,6 +50,17 @@ export function ChatComponent({ items, userId }: Props) {
     createChannel();
   }, [client, items.user?.id, userId]);
 
+  const customMessageActions: CustomMessageActions = {
+    "Delete for Me": async (message) => {
+      if (!client) return;
+      try {
+        await client.deleteMessage(message.id, { deleteForMe: true });
+      } catch (error) {
+        console.error("Error deleting message:", error);
+      }
+    },
+  };
+
   if (!client || !channel) {
     return (
       <div className="p-4 w-full flex justify-center items-center">
@@ -72,6 +84,7 @@ export function ChatComponent({ items, userId }: Props) {
               "react",
               OPTIONAL_MESSAGE_ACTIONS.deleteForMe,
             ]}
+            customMessageActions={customMessageActions}
           />
           <MessageInput />
         </Window>
