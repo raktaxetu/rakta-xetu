@@ -396,7 +396,7 @@ function ToolCall({
           case "result":
             if (toolName === "webSearch") {
               return (
-                <div key={index} className="rounded-lg space-y-1 wrap-anywhere">
+                <div key={index} className="rounded-lg space-y-4 wrap-anywhere">
                   <div className=" mb-0">
                     <Sources>
                       <SourcesTrigger count={3} />
@@ -415,7 +415,7 @@ function ToolCall({
                   </div>
                   {invocation.result.map(
                     (result: WebToolResult, index: number) => (
-                      <div className="space-y-3 rounded-lg" key={index + 1}>
+                      <div className="space-y-0.5 rounded-lg" key={index + 1}>
                         <p className="text-light text-neutral-400 text-sm">
                           <span className="text-neutral-500">Title:</span>{" "}
                           <span className="font-extralight">
