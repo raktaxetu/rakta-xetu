@@ -9,7 +9,6 @@ import {
   SourcesContent,
   SourcesTrigger,
 } from "@/components/ai-elements/sources";
-
 import { cn } from "@/lib/utils";
 import {
   Collapsible,
@@ -399,7 +398,7 @@ function ToolCall({
                 <div key={index} className="rounded-lg space-y-4 wrap-anywhere">
                   <div className=" mb-0">
                     <Sources>
-                      <SourcesTrigger count={3} />
+                      <SourcesTrigger count={5} />
                       <SourcesContent className="mb-0 text-blue-500">
                         {invocation.result.map(
                           (result: WebToolResult, index: number) => (
