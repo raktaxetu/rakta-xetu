@@ -42,8 +42,7 @@ export async function POST(req: Request) {
   }
 
   const { messages } = await req.json();
-
-  const result = streamText({
+  const result = await streamText({
     model: google("gemini-2.5-flash"),
     system: prompt,
     messages,
@@ -57,6 +56,5 @@ export async function POST(req: Request) {
       recordOutputs: true,
     },
   });
-
   return result.toDataStreamResponse();
 }

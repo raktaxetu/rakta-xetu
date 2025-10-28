@@ -5,16 +5,9 @@ import Exa from "exa-js";
 export const exa = new Exa(process.env.EXA_API_KEY!);
 
 export const webSearch = tool({
-  description:
-    "Fetch up-to-date public information about blood banks, donation centers, blood drives, and other blood-donation-related topics. Use this to locate donation sites or confirm availability in a region.",
+  description: "Search the web for up-to-date information",
   parameters: z.object({
-    query: z
-      .string()
-      .min(1)
-      .max(100)
-      .describe(
-        "The search query, such as 'active blood banks in xyz location' or 'nearest blood donation camp in xyz location'."
-      ),
+    query: z.string().min(1).max(100).describe("The search query"),
   }),
   execute: async ({ query }) => {
     const { results } = await exa.searchAndContents(query, {
