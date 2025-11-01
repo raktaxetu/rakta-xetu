@@ -23,7 +23,12 @@ export const searchDonorsWithAI = async () => {
       return { error: "The profile doesn't exist" };
     }
 
-    const aiQuery = `Blood Group: ${myProfile.bloodGroup}, Location: ${myProfile.location}`;
+    const aiQuery = `
+    Find blood donors whose blood group is EXACTLY ${myProfile.bloodGroup} and who are located in or near ${myProfile.location}.
+    Blood group must match exactly: ${myProfile.bloodGroup}.
+    Location proximity is the secondary priority: ${myProfile.location}, nearby areas.
+    Return the most relevant and closest matches first.
+    `.trim();
 
     const results = await index.searchRecords({
       query: {
