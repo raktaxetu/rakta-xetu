@@ -36,7 +36,10 @@ export function Menu() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         {menuItems.map((item) => {
-          const isActive = pathname === item.path;
+          const isActive =
+            item.path === "/"
+              ? pathname === "/"
+              : pathname.startsWith(item.path);
           return (
             <DropdownMenuItem
               key={item.path}
