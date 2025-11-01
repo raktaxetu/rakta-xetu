@@ -38,20 +38,41 @@ export const chartInfo = async () => {
       throw new Error("the user is not authenticated");
     }
     await connectToDb();
-    const donation = await Blood.find({
-      isAccepted: true,
-      acceptedBy: session.user.id,
-    });
-    const request = await Blood.find({ userId: session.user.id });
-    const totalDonations = donation.reduce(
-      (acc, curr) => acc + (curr.units || 0),
-      0
-    );
-    const totalRequests = request.reduce(
-      (acc, curr) => acc + (curr.units || 0),
-      0
-    );
-    const totalLivesAffected = donation.length + request.length;
+    const [donationStats, requestStats] = await Promise.all([
+      Blood.aggregate([
+        {
+          $match: {
+            isAccepted: true,
+            acceptedBy: session.user.id,
+          },
+        },
+        {
+          $group: {
+            _id: null,
+            totalUnits: { $sum: { $ifNull: ["$units", 0] } },
+            count: { $sum: 1 },
+          },
+        },
+      ]),
+      Blood.aggregate([
+        {
+          $match: {
+            userId: session.user.id,
+          },
+        },
+        {
+          $group: {
+            _id: null,
+            totalUnits: { $sum: { $ifNull: ["$units", 0] } },
+            count: { $sum: 1 },
+          },
+        },
+      ]),
+    ]);
+    const totalDonations = donationStats[0]?.totalUnits || 0;
+    const totalRequests = requestStats[0]?.totalUnits || 0;
+    const totalLivesAffected =
+      (donationStats[0]?.count || 0) + (requestStats[0]?.count || 0);
     return {
       totalDonations,
       totalRequests,
@@ -67,3 +88,4 @@ export const chartInfo = async () => {
     };
   }
 };
+
