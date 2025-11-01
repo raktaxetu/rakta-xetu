@@ -208,10 +208,10 @@ export function OnboardingForm() {
           render={({ field }) => (
             <FormItem>
               <FormLabel className="text-neutral-500 font-light">
-                Enter your address
+                Enter your location
               </FormLabel>
               <FormControl>
-                <Input placeholder="Enter your address" {...field} />
+                <Input placeholder="Enter your location" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
