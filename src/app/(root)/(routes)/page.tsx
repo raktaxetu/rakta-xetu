@@ -3,13 +3,11 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { Features } from "../../../components/modules/home/features";
 import { ProfileInfo } from "@/components/modules/home/profile";
-import { Banner } from "../../../components/temp/banner";
 
 export default async function Home() {
   const session = await auth.api.getSession({ headers: await headers() });
   return (
     <div className="w-full">
-      <Banner />
       <h1 className="text-neutral-500 font-light text-xl">
         Welcome {session?.user.name}
       </h1>
