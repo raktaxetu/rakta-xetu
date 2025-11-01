@@ -1,11 +1,10 @@
 "use server";
 
-import { auth, db } from "@/lib/auth";
+import { auth } from "@/lib/auth";
 import { IProfile } from "../../../types/schema";
 import { headers } from "next/headers";
 import connectToDb from "@/db";
 import Profile from "@/db/models/profile";
-import { ObjectId } from "mongodb";
 import { StreamChat } from "stream-chat";
 import axios from "axios";
 import { upsertVector } from "@/vector/services/donor-vectors";
@@ -65,26 +64,6 @@ export const createUser = async (items: IProfile) => {
     console.error(error);
     return {
       message: "failed to create profile",
-    };
-  }
-};
-
-export const listUsers = async () => {
-  try {
-    const session = await auth.api.getSession({ headers: await headers() });
-    if (!session) throw new Error("user is not authenticated");
-    await connectToDb();
-    const result = await db
-      .collection("user")
-      .find({ _id: { $ne: new ObjectId(session.user.id) }, isUser: true })
-      .sort({ createdAt: -1 })
-      .toArray();
-    const users = JSON.parse(JSON.stringify(result));
-    return users;
-  } catch (error) {
-    console.error(error);
-    return {
-      message: "failed to list users",
     };
   }
 };
