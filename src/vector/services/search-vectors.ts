@@ -1,4 +1,5 @@
 "use server";
+
 import { auth } from "@/lib/auth";
 import { index } from "../pinecone";
 import { headers } from "next/headers";
@@ -29,8 +30,18 @@ export const searchDonorsWithAI = async () => {
       query: {
         topK: 10,
         inputs: { text: aiQuery },
+        filter: {
+          bloodGroup: { $eq: myProfile.bloodGroup },
+        },
       },
+      rerank: {
+        model: "bge-reranker-v2-m3",
+        topN: 10,
+        rankFields: ["text"],
+      },
+      fields: ["bloodGroup", "location", "name", "dateOfBirth"],
     });
+
     const result = results.result.hits;
     const resultIds = result.map((item: any) => item._id);
 
