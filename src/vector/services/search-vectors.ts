@@ -43,6 +43,9 @@ export const searchDonorsWithAI = async () => {
     });
 
     const result = results.result.hits;
+    if (result?.length === 0) {
+      return { hasMatchedProfiles: false };
+    }
     const resultIds = result.map((item: any) => item._id);
 
     const profiles = await Profile.find({ _id: { $in: resultIds } }).lean();

@@ -7,6 +7,7 @@ import { useAISearch } from "@/store/search-ai";
 import { cn } from "@/lib/utils";
 import { Shimmer } from "@/components/ai-elements/shimmer";
 import { useAIMatch } from "@/store/match";
+import { toast } from "sonner";
 
 export function AISearch() {
   const { isAISearching, setIsAISearching } = useAISearch();
@@ -15,6 +16,8 @@ export function AISearch() {
     try {
       setIsAISearching(true);
       const results = await searchDonorsWithAI();
+      if (results?.hasMatchedProfiles === false)
+        toast.error("We couldn't find any matches based on your profile.");
       setMatches(results);
     } catch (error) {
       console.error(error);

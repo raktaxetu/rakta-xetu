@@ -55,15 +55,9 @@ export function DonorsList({ donors }: { donors: Promise<IDonor[]> }) {
 
   if (isAISearching) {
     return (
-      <div className="flex justify-start items-center gap-x-3">
-        <BrainCircuit
-          size={16}
-          className="animate-pulse text-neutral-500 font-light"
-        />
-        <Shimmer className="text-sm font-light">
-          Searching donors based on your profile
-        </Shimmer>
-      </div>
+      <Shimmer className="font-light">
+        Searching donors based on your profile
+      </Shimmer>
     );
   }
 
