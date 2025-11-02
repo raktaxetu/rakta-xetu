@@ -8,7 +8,6 @@ import { useSearchDonors } from "@/store/search-donors";
 import { Button } from "@/components/ui/button";
 import { useAISearch } from "@/store/search-ai";
 import { Shimmer } from "@/components/ai-elements/shimmer";
-import { BrainCircuit } from "lucide-react";
 import { useAIMatch } from "@/store/match";
 
 export function DonorsList({ donors }: { donors: Promise<IDonor[]> }) {
@@ -65,7 +64,7 @@ export function DonorsList({ donors }: { donors: Promise<IDonor[]> }) {
     <>
       {matches && matches.length > 0 && (
         <div className="my-4 text-neutral-500 font-light">
-          Here are the top 10 results based on your profile
+          Here are the top matches based on your profile.
         </div>
       )}
       <div className="grid grid-cols-1 sm:grid-cols-2 place-items-center gap-4">

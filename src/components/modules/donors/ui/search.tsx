@@ -16,8 +16,11 @@ export function AISearch() {
     try {
       setIsAISearching(true);
       const results = await searchDonorsWithAI();
-      if (results?.hasMatchedProfiles === false)
-        toast.error("We couldn't find any matches based on your profile.");
+      if (results?.hasMatchedProfiles === false) {
+        toast("We couldn't find any matches based on your profile");
+        setMatches([]);
+        return;
+      }
       setMatches(results);
     } catch (error) {
       console.error(error);
