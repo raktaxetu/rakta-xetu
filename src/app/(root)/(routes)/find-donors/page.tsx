@@ -8,8 +8,21 @@ import { Suspense } from "react";
 export const dynamic = "force-dynamic";
 export const fetchCache = "force-no-store";
 
-export default function FindDonors() {
-  const donors = fetchDonors();
+interface SearchParams {
+  search?: string;
+  page?: string;
+}
+
+export default async function FindDonors({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>;
+}) {
+  const search = (await searchParams).search || "";
+  const page = parseInt((await searchParams).page || "1", 10);
+
+  const donors = fetchDonors({ search, page, limit: 10 });
+
   return (
     <div>
       <div className="flex flex-col justify-start items-start gap-4">
@@ -25,7 +38,7 @@ export default function FindDonors() {
         }
       >
         <div className="pb-4">
-          <DonorsList donors={donors} />
+          <DonorsList donors={donors} searchQuery={search} currentPage={page} />
         </div>
       </Suspense>
     </div>
